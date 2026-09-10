@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 
 const FILTERS = ['All', 'Active', 'Done']
@@ -10,10 +10,19 @@ function App() {
     { id: crypto.randomUUID(), text: 'Write API documentation', done: false },
   ])
   const [input, setInput] = useState('')
-  const [filter, setFilter] = useState('All')
+  const [filter, setFilter] = useState('Active')
   const [dragIdx, setDragIdx] = useState(null)
   const [overIdx, setOverIdx] = useState(null)
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
   const inputRef = useRef(null)
+
+  // ── Theme ─────────────────────────────────────────
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark')
 
   // ── CRUD ──────────────────────────────────────────
   const addTask = () => {
@@ -71,6 +80,18 @@ function App() {
 
   return (
     <div className="app">
+      {/* Theme Toggle */}
+      <button
+        className="theme-toggle"
+        id="theme-toggle"
+        onClick={toggleTheme}
+        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      >
+        <span className="theme-toggle__icon">
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </span>
+      </button>
+
       {/* Header */}
       <header className="header">
         <h1 className="header__title">Taskflow</h1>
